@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>My Medical Records</title>
+  <style>
+    body { padding: 20px; font-family: Arial; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { padding: 10px; border: 1px solid #ccc; }
+    tr:hover { background: #f5f5f5; }
+    .file-link { color: blue; text-decoration: underline; cursor: pointer; }
+  </style>
+</head>
+<body>
+
+<h2>🩺 My Medical File</h2>
+
+<table>
+<thead>
+<tr>
+  <th>Date</th>
+  <th>Doctor</th>
+  <th>Description</th>
+  <th>Attachment</th>
+</tr>
+</thead>
+<tbody id="recordsTable"></tbody>
+</table>
+
+<script>
+const API = "http://localhost:5000/api";
+const patient_id = localStorage.getItem("patient_id"); // stored at login
+
+async function loadRecords() {
+  const res = await fetch(`${API}/patient/${patient_id}/records`);
+  const list = await res.json();
+  recordsTable.innerHTML = "";
+  list.forEach(r => {
+    recordsTable.insertAdjacentHTML("beforeend", `
+      <tr>
+        <td>${r.record_date}</td>
+        <td>${r.doctor || '-'}</td>
+        <td>${r.description}</td>
+        <td>${r.file_path ? `<a class="file-link" href="${r.file_path}" target="_blank">View</a>` : '-'}</td>
+      </tr>
+    `);
+  });
+}
+
+loadRecords();
+</script>
+
+</body>
+</html>

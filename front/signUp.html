@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign Up | Quanta Cloud HIMS</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Poppins", sans-serif;
+    }
+
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      background: url('./img/03dc84de-8fcd-4aef-88c6-3405209c0d1b.png') no-repeat center center/cover;
+      position: relative;
+      overflow: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0);
+      backdrop-filter: blur(2px);
+    }
+
+    @keyframes fadeInUp {
+      0% {
+        opacity: 0;
+        transform: translateY(40px) scale(0.98);
+      }
+
+      60% {
+        opacity: 0.8;
+        transform: translateY(-10px) scale(1.02);
+      }
+
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    @keyframes float {
+
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(-5px);
+      }
+    }
+
+    .signup-box {
+      position: relative;
+      z-index: 2;
+      background: #a5b0b98d;
+      width: 420px;
+      padding: 35px 35px;
+      border-radius: 10px;
+      box-shadow: 0 5px 30px rgba(0, 0, 0, 0.2);
+      text-align: center;
+      opacity: 0;
+      animation: fadeInUp 1.2s ease-out forwards, float 5s ease-in-out infinite;
+      animation-delay: 0.3s;
+    }
+
+    .signup-box:hover {
+      transform: scale(1.02);
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
+      transition: all 0.3s ease;
+    }
+
+    .signup-box img {
+      width: 90px;
+      margin-bottom: 15px;
+    }
+
+    .signup-box h2 {
+      margin-bottom: 20px;
+      font-weight: 600;
+      font-size: 22px;
+      color: #0A233C;
+    }
+
+    input,
+    select {
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 15px;
+      outline: none;
+      transition: 0.3s;
+    }
+
+    input:focus {
+      border-color: #0A233C;
+      box-shadow: 0 0 4px rgba(10, 35, 60, 0.3);
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 5px;
+      background: #0A233C;
+      color: #fff;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.3s;
+      margin-top: 10px;
+    }
+
+    button:hover {
+      background: #10345c;
+      transform: translateY(-2px);
+    }
+
+    .footer {
+      margin-top: 15px;
+      font-size: 13px;
+      color: #555;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="signup-box">
+    <img src="./img/1600w-arM9aB02SLw.webp" alt="Quanta Logo">
+    <h2>Create Account</h2>
+
+    <form id="signupForm" class="container">
+      <div class="row">
+        <div class="mt-3 col-lg-6">
+          <input type="text" id="firstName" placeholder="First Name" required />
+        </div>
+        <div class="mt-3 col-lg-6">
+          <input type="text" id="lastName" placeholder="Last Name" required />
+        </div>
+        <div class="mt-3 col-lg-6">
+          <input type="email" id="email" placeholder="Email" required />
+        </div>
+        <div class="mt-3 col-lg-6">
+          <input type="tel" id="phone" placeholder="phone" required />
+        </div>
+        <div class="mt-3 col-lg-6">
+          <input type="text" id="username" placeholder="Username" required />
+        </div>
+        <div class="mt-3 col-lg-6">
+          <input type="password" id="password" placeholder="Password" required />
+        </div>
+        <div class="mt-3 col-lg-6">
+          <input type="text" id="specialty" placeholder="Specialty (for doctors only)" />
+        </div>
+      </div>
+
+      <div id="roleSection" class="mt-4">
+        <h5 style="color:#0A233C; margin-bottom:10px;">Select Your Role</h5>
+        <select id="role" required>
+          <option value="">Select Role</option>
+          <option value="patient">Patient</option>
+          <option value="doctor">Doctor</option>
+          <!-- <option value="client">Other</option> -->
+        </select>
+      </div>
+
+      <button type="submit" class="mt-3">Sign Up</button>
+
+      <div class="footer">
+        Already have an account? <a href="login.html">Login here</a>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const form = document.getElementById("signupForm");
+      const specialtyField = document.getElementById("specialty");
+      const phoneField = document.getElementById("phone");
+
+      const roleSelect = document.getElementById("role");
+
+      // Hide specialty field unless doctor
+      roleSelect.addEventListener("change", () => {
+        if (roleSelect.value === "doctor") {
+          specialtyField.style.display = "block";
+          // phoneField.style.display = "block";
+
+        } else {
+          // phoneField.style.display = "none";
+          // phoneField.value = "";
+          specialtyField.style.display = "none";
+          specialtyField.value = "";
+        }
+      });
+      specialtyField.style.display = "none"; // default hidden
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const firstName = document.getElementById("firstName").value.trim();
+        const lastName = document.getElementById("lastName").value.trim();
+        const email = document.getElementById("email").value.trim();
+        const username = document.getElementById("username").value.trim();
+        const password = document.getElementById("password").value;
+        const role = roleSelect.value;
+        const specialty = specialtyField.value.trim();
+        const phone = phoneField.value.trim();
+        if (!firstName || !lastName || !email || !username || !password || !role) {
+          alert("⚠️ Please fill in all required fields!");
+          return;
+        }
+
+        try {
+          const res = await fetch("http://localhost:5000/api/signup", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              role,
+              firstName,
+              lastName,
+              email,
+              username,
+              password,
+              specialty, phone
+            }),
+          });
+
+          const data = await res.json();
+
+          if (!res.ok) {
+            if (data.message?.includes("already exists")) {
+              alert("⚠️ User already exists! Redirecting to login...");
+              setTimeout(() => (window.location.href = "login.html"), 1500);
+            } else {
+              alert(`❌ ${data.message || "Signup failed!"}`);
+            }
+            return;
+          }
+
+          alert(`✅ Account created successfully as ${role.toUpperCase()}! Redirecting to login...`);
+          setTimeout(() => (window.location.href = "login.html"), 1500);
+        } catch (err) {
+          console.error(err);
+          alert("⚠️ Server connection failed!");
+        }
+      });
+    });
+  </script>
+</body>
+
+</html>

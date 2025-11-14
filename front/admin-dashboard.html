@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Dashboard</title>
+  <style>
+    body {
+      font-family: Arial;
+      padding: 30px;
+    }
+
+    .cards {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 25px;
+    }
+
+    .card {
+      background: #0A233C;
+      color: white;
+      padding: 20px;
+      border-radius: 8px;
+      width: 180px;
+      text-align: center;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    th,
+    td {
+      border: 1px solid #ccc;
+      padding: 10px;
+      text-align: center;
+    }
+
+    tr:hover {
+      background: #e9e9e9;
+    }
+
+    h3 {
+      margin-top: 40px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h2>👑 Admin Dashboard</h2>
+
+  <div class="cards">
+    <div class="card">Doctors <br><span id="countDoctors"></span></div>
+    <div class="card">Patients <br><span id="countPatients"></span></div>
+    <div class="card">Staff <br><span id="countStaff"></span></div>
+    <div class="card">Appointments <br><span id="countAppointments"></span></div>
+  </div>
+
+  <h3>🧑‍⚕️ Doctors</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Specialty</th>
+        <th>Phone</th>
+        <th>Email</th>
+      </tr>
+    </thead>
+    <tbody id="doctorsTable"></tbody>
+  </table>
+
+  <h3>🧑 Patients</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Gender</th>
+        <th>Phone</th>
+      </tr>
+    </thead>
+    <tbody id="patientsTable"></tbody>
+  </table>
+
+  <h3>📅 Appointments</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Doctor</th>
+        <th>Patient</th>
+        <th>Date</th>
+        <th>Time</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody id="appointmentsTable"></tbody>
+  </table>
+
+  <script>
+    const API = "http://localhost:5000/api";
+
+    async function loadDashboard() {
+      const res = await fetch(`${API}/admin/overview`);
+      const data = await res.json();
+
+      countDoctors.innerText = data.counts.doctors;
+      countPatients.innerText = data.counts.patients;
+      countStaff.innerText = data.counts.staff;
+      countAppointments.innerText = data.counts.appointments;
+
+      doctorsTable.innerHTML = "";
+      data.doctors.forEach(d => {
+        doctorsTable.innerHTML += `<tr>
+      <td>${d.first_name} ${d.last_name}</td>
+      <td>${d.specialty || '-'}</td>
+      <td>${d.phone || '-'}</td>
+      <td>${d.email || '-'}</td>
+    </tr>`;
+      });
+
+      patientsTable.innerHTML = "";
+      data.patients.forEach(p => {
+        patientsTable.innerHTML += `<tr>
+      <td>${p.first_name} ${p.last_name}</td>
+      <td>${p.gender || '-'}</td>
+      <td>${p.phone || '-'}</td>
+    </tr>`;
+      });
+
+      appointmentsTable.innerHTML = "";
+      data.appointments.forEach(a => {
+        appointmentsTable.innerHTML += `<tr>
+      <td>${a.doctor}</td>
+      <td>${a.patient}</td>
+      <td>${a.date}</td>
+      <td>${a.time}</td>
+      <td>${a.status}</td>
+    </tr>`;
+      });
+
+    }
+
+    loadDashboard();
+  </script>
+
+</body>
+
+</html>

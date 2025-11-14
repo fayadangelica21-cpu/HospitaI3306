@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>My Appointments</title>
+    <style>
+        body {
+            padding: 20px;
+            font-family: Arial;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th,
+        td {
+            padding: 10px;
+            border: 1px solid #ccc;
+        }
+
+        tr:hover {
+            background: #f4f4f4;
+            cursor: pointer;
+        }
+
+        .form {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 8px 12px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h2>👤 My Appointments</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Doctor</th>
+                <th>Specialty</th>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="appointments"></tbody>
+    </table>
+
+    <h3>🗓 Book New Appointment</h3>
+    <div class="form">
+        <select id="doctor"></select>
+        <input type="date" id="date">
+        <input type="time" id="time">
+        <button id="bookBtn">Book</button>
+    </div>
+
+    <script>
+        const API = "http://localhost:5000/api";
+        const patient_id = localStorage.getItem("patient_id"); // ⚠ يجب تخزينه بعد تسجيل الدخول
+
+        async function loadDoctors() {
+            const res = await fetch(`${API}/doctors`);
+            const list = await res.json();
+            doctor.innerHTML = "";
+            list.forEach(d => {
+                doctor.insertAdjacentHTML("beforeend", `<option value="${d.doctor_id}">${d.first_name} ${d.last_name}</option>`);
+            });
+        }
+
+        async function loadAppointments() {
+            const res = await fetch(`${API}/patient/${patient_id}/appointments`);
+            const list = await res.json();
+            appointments.innerHTML = "";
+            list.forEach(a => {
+                appointments.insertAdjacentHTML("beforeend", `
+      <tr>
+        <td>${a.doctor}</td>
+        <td>${a.specialty}</td>
+        <td>${a.date}</td>
+        <td>${a.time}</td>
+        <td>${a.status}</td>
+        <td><button onclick="cancel(${a.appointment_id})">Cancel</button></td>
+      </tr>
+    `);
+            });
+        }
+
+        async function cancel(id) {
+            await fetch(`${API}/patient/${patient_id}/appointments/${id}`, { method: "DELETE" });
+            loadAppointments();
+        }
+
+        bookBtn.onclick = async () => {
+            await fetch(`${API}/appointments`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    patient_id,
+                    doctor_id: doctor.value,
+                    date: date.value,
+                    time: time.value
+                })
+            });
+            loadAppointments();
+        };
+
+        loadDoctors();
+        loadAppointments();
+    </script>
+
+</body>
+
+</html>

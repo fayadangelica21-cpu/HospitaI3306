@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>All Appointments</title>
+  <style>
+    body { padding: 20px; font-family: Arial; }
+    table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+    th, td { padding: 10px; border: 1px solid #ccc; text-align: center; }
+    tr:hover { background: #eee; cursor: pointer; }
+    .filters { display:flex; gap:10px; margin-bottom:15px; }
+    select, input { padding: 8px; }
+    button { padding: 8px 12px; }
+  </style>
+</head>
+<body>
+
+<h2>📋 All Appointments</h2>
+
+<div class="filters">
+  <select id="doctorFilter"></select>
+  <select id="patientFilter"></select>
+  <input type="date" id="dateFilter">
+  <select id="statusFilter">
+    <option value="">Status</option>
+    <option value="scheduled">Scheduled</option>
+    <option value="completed">Completed</option>
+    <option value="cancelled">Cancelled</option>
+  </select>
+  <button onclick="loadAppointments()">Search</button>
+</div>
+
+<table>
+<thead>
+<tr>
+  <th>Doctor</th>
+  <th>Patient</th>
+  <th>Date</th>
+  <th>Time</th>
+  <th>Status</th>
+  <th>Action</th>
+</tr>
+</thead>
+<tbody id="appointmentsTable"></tbody>
+</table>
+
+<script>
+const API = "http://localhost:5000/api";
+
+// Load doctor list
+async function loadDoctors() {
+  const res = await fetch(`${API}/doctors`);
+  const list = await res.json();
+  doctorFilter.innerHTML = '<option value="">Doctor</option>';
+  list.forEach(d => doctorFilter.insertAdjacentHTML("beforeend", `<option value="${d.doctor_id}">${d.first_name} ${d.last_name}</option>`));
+}
+
+// Load patient list
+async function loadPatients() {
+  const res = await fetch(`${API}/patients`);
+  const list = await res.json();
+  patientFilter.innerHTML = '<option value="">Patient</option>';
+  list.forEach(p => patientFilter.insertAdjacentHTML("beforeend", `<option value="${p.patient_id}">${p.first_name} ${p.last_name}</option>`));
+}
+
+// Load appointments with filters
+async function loadAppointments() {
+  const params = new URLSearchParams({
+    doctor_id: doctorFilter.value,
+    patient_id: patientFilter.value,
+    date: dateFilter.value,
+    status: statusFilter.value
+  });
+
+  const res = await fetch(`${API}/appointments?${params.toString()}`);
+  const list = await res.json();
+  appointmentsTable.innerHTML = "";
+  list.forEach(a => {
+    appointmentsTable.insertAdjacentHTML("beforeend", `
+      <tr>
+        <td>${a.doctor}</td>
+        <td>${a.patient}</td>
+        <td>${a.date}</td>
+        <td>${a.time}</td>
+        <td>${a.status}</td>
+        <td><button onclick="cancel(${a.appointment_id})">❌ Cancel</button></td>
+      </tr>
+    `);
+  });
+}
+
+async function cancel(id){
+  await fetch(`${API}/appointments/${id}`, { method:"DELETE" });
+  loadAppointments();
+}
+
+// Initialize Page
+loadDoctors();
+loadPatients();
+loadAppointments();
+</script>
+
+</body>
+</html>

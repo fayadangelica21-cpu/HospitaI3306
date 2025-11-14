@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Doctors Preview | Quanta HIMS</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #f7f9fc;
+      margin: 0;
+      padding: 0;
+      color: #333;
+    }
+
+    /* ===== HEADER ===== */
+    header {
+      background: linear-gradient(90deg, #0A233C, #123B64);
+      color: #fff;
+      padding: 18px 30px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo img {
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      background: white;
+      object-fit: contain;
+    }
+
+    .logo h1 {
+      font-size: 20px;
+      font-weight: 600;
+      margin: 0;
+      letter-spacing: 0.5px;
+    }
+
+    .view-all-btn {
+      background: #fff;
+      color: #0A233C;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .view-all-btn:hover {
+      background: #e9f3ff;
+      transform: scale(1.05);
+    }
+
+    /* ===== CONTAINER ===== */
+    .container {
+      padding: 40px 30px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 25px;
+      animation: fadeIn 0.8s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* ===== DOCTOR CARD ===== */
+    .doctor-card {
+      background: #fff;
+      border-radius: 14px;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      text-align: center;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .doctor-card:hover {
+      background: #f0f7ff;
+      transform: scale(1.03);
+    }
+
+    .doctor-avatar {
+      width: 85px;
+      height: 85px;
+      border-radius: 50%;
+      background: #0A233C;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      font-weight: 600;
+      margin: 0 auto 12px;
+      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+    }
+
+    .doctor-card h4 {
+      margin: 10px 0 5px;
+      color: #0A233C;
+      font-size: 18px;
+    }
+
+    .doctor-card p {
+      margin: 4px 0;
+      color: #555;
+      font-size: 14px;
+    }
+
+    /* ===== POPUPS ===== */
+    .popup {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+    }
+
+    .popup-content {
+      background: white;
+      border-radius: 10px;
+      padding: 30px;
+      width: 320px;
+      text-align: center;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+      animation: slideUp 0.4s ease;
+    }
+
+    @keyframes slideUp {
+      from {
+        transform: translateY(40px);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    .book-btn {
+      background: #1a73e8;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: background 0.3s ease;
+    }
+
+    .book-btn:hover {
+      background: #0c56c0;
+    }
+
+    .green-btn {
+      background: #34a853 !important;
+    }
+
+    .close-btn {
+      background: #0A233C;
+      color: white;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .close-btn:hover {
+      background: #123B64;
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <div class="logo">
+      <img src="./img/1600w-arM9aB02SLw.webp" alt="Logo">
+      <h1>Quanta HIMS</h1>
+    </div>
+    <button class="view-all-btn" onclick="window.location.href='all-doctors.html'">View All Doctors</button>
+    <a href="login.html" onclick="localStorage.clear()" style="color:white;text-decoration:none;">Logout</a>
+  </header>
+
+  <!-- DOCTORS LIST -->
+  <div class="container" id="doctorsList">
+    <p>Loading doctors...</p>
+  </div>
+
+  <!-- DOCTOR INFO POPUP -->
+  <div class="popup" id="popup">
+    <div class="popup-content" id="popupContent"></div>
+  </div>
+
+  <!-- FEEDBACK POPUP -->
+  <div class="popup" id="feedbackPopup">
+    <div class="popup-content">
+      <h3>Leave Feedback</h3>
+      <textarea id="feedbackText" rows="5"
+        style="width:100%;padding:8px;border-radius:6px;border:1px solid #ccc"></textarea>
+      <button class="book-btn green-btn" onclick="submitFeedback()">Submit</button>
+      <button class="close-btn" onclick="closeFeedback()">Close</button>
+    </div>
+  </div>
+
+  <script>
+    const popup = document.getElementById("popup");
+    const popupContent = document.getElementById("popupContent");
+    const feedbackPopup = document.getElementById("feedbackPopup");
+    const list = document.getElementById("doctorsList");
+
+    let selectedDoctor = null;
+
+    // ================================
+    // LOAD DOCTORS
+    // ================================
+    async function loadDoctors() {
+      try {
+        const res = await fetch("http://localhost:5000/api/doctors");
+        const doctors = await res.json();
+
+        list.innerHTML = "";
+        doctors.slice(0, 8).forEach(d => {
+          const div = document.createElement("div");
+          div.className = "doctor-card";
+          div.innerHTML = `
+            <div class="doctor-avatar">${d.first_name[0]}${d.last_name[0]}</div>
+            <h4>${d.first_name} ${d.last_name}</h4>
+            <p>${d.specialty || 'No specialty'}</p>
+            <p>📞 ${d.phone || '-'}</p>
+          `;
+          div.addEventListener("click", () => openPopup(d));
+          list.appendChild(div);
+        });
+      } catch (err) {
+        list.innerHTML = "<p style='color:red'>⚠️ Failed to load doctors</p>";
+      }
+    }
+
+    // ================================
+    // OPEN DOCTOR POPUP
+    // ================================
+    function openPopup(doctor) {
+      selectedDoctor = doctor;
+
+      popupContent.innerHTML = `
+        <h3>${doctor.first_name} ${doctor.last_name}</h3>
+        <p><strong>Specialty:</strong> ${doctor.specialty || '-'}</p>
+        <p><strong>Phone:</strong> ${doctor.phone || '-'}</p>
+        <p><strong>Email:</strong> ${doctor.email || '-'}</p>
+
+        <a class="book-btn" style="text-decoration:none;" href="https://wa.me/${doctor.phone}">Contact</a>
+        <button class="book-btn green-btn" onclick="openFeedback()">Leave Feedback</button>
+        <button class="close-btn" onclick="closePopup()">Close</button>
+      `;
+      popup.style.display = "flex";
+    }
+
+    function closePopup() {
+      popup.style.display = "none";
+    }
+
+    popup.addEventListener("click", e => {
+      if (e.target === popup) closePopup();
+    });
+
+    // ================================
+    // BOOK APPOINTMENT
+    // ================================
+    async function bookAppointment() {
+      const patientId = localStorage.getItem("patient_id") || 1;
+      const doctorId = selectedDoctor.doctor_id;
+      const today = new Date().toISOString().split("T")[0];
+
+      try {
+        const res = await fetch("http://localhost:5000/api/appointments", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            patient_id: patientId,
+            doctor_id: doctorId,
+            date: today,
+            time: "10:00"
+          })
+        });
+
+        if (res.ok) {
+          alert(`✅ Appointment booked with Dr. ${selectedDoctor.first_name} ${selectedDoctor.last_name}`);
+          closePopup();
+        } else {
+          alert("❌ Failed to book appointment.");
+        }
+      } catch (err) {
+        alert("⚠ Server error while booking appointment.");
+      }
+    }
+
+    // ================================
+    // FEEDBACK SYSTEM
+    // ================================
+    function openFeedback() {
+      feedbackPopup.style.display = "flex";
+    }
+
+    function closeFeedback() {
+      feedbackPopup.style.display = "none";
+    }
+
+    async function submitFeedback() {
+      const content = document.getElementById("feedbackText").value;
+      const userId = localStorage.getItem("user_id");
+      const patientId = localStorage.getItem("patient_id");
+      const doctorId = selectedDoctor.doctor_id;
+
+      if (!content.trim()) {
+        alert("Please write something.");
+        return;
+      }
+
+      try {
+        const res = await fetch("http://localhost:5000/api/feedback", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            user_id: userId,
+            patient_id: patientId,
+            doctor_id: doctorId,
+            content
+          })
+        });
+
+        if (res.ok) {
+          alert("✅ Feedback submitted.");
+          closeFeedback();
+          document.getElementById("feedbackText").value = "";
+        } else {
+          alert("❌ Failed to submit feedback.");
+        }
+
+      } catch (err) {
+        alert("⚠ Server error.");
+      }
+    }
+
+    loadDoctors();
+  </script>
+
+</body>
+
+</html>

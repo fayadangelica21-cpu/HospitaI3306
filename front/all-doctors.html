@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doctors List</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f4f7fb;
+            margin: 0;
+            padding: 0;
+        }
+
+        .header {
+            background: linear-gradient(90deg, #0A233C, #123B64);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            font-size: 22px;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .container {
+            padding: 25px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .doctor-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .doctor-card:hover {
+            background: #e9f3ff;
+            transform: scale(1.03);
+        }
+
+        .doctor-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: #0A233C;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            margin: 0 auto 10px;
+            font-weight: bold;
+        }
+
+        /* Popup */
+        .popup {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .popup-content {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            width: 300px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            animation: slideUp 0.4s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(40px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .book-btn {
+            background: #1a73e8;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 10px;
+            margin-right: 8px;
+            transition: background 0.3s ease;
+        }
+
+        .book-btn:hover {
+            background: #0c56c0;
+        }
+
+        .popup-content h3 {
+            color: #0A233C;
+            margin-bottom: 10px;
+        }
+
+        .popup-content p {
+            margin: 5px 0;
+        }
+
+        .close-btn {
+            background: #0A233C;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+
+        .close-btn:hover {
+            background: #123B64;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">🧑‍⚕️ Our Doctors</div>
+
+    <div class="container" id="doctorsList">
+        <p>Loading doctors...</p>
+    </div>
+
+    <!-- Popup -->
+    <div class="popup" id="popup">
+        <div class="popup-content" id="popupContent">
+            <h3>Doctor Info</h3>
+            <p><strong>Name:</strong> </p>
+            <p><strong>Specialty:</strong> </p>
+            <p><strong>Phone:</strong> </p>
+            <p><strong>Email:</strong> </p>
+            <button class="book-btn">Book Appointment</button>
+            <button class="close-btn" onclick="closePopup()">Close</button>
+        </div>
+    </div>
+
+    <script>
+        const popup = document.getElementById("popup");
+        const popupContent = document.getElementById("popupContent");
+        const list = document.getElementById("doctorsList");
+
+        async function loadDoctors() {
+            try {
+                const res = await fetch("http://localhost:5000/api/doctors");
+                debugger
+
+                const doctors = await res.json();
+
+                list.innerHTML = "";
+                doctors.forEach(d => {
+                    const div = document.createElement("div");
+                    div.className = "doctor-card";
+                    div.innerHTML = `
+            <div class="doctor-avatar">${d.first_name[0]}${d.last_name[0]}</div>
+            <h4>${d.first_name} ${d.last_name}</h4>
+            <p>${d.specialty || 'No specialty'}</p>
+            <p>📞 ${d.phone || '-'}</p>
+          `;
+                    div.addEventListener("click", () => openPopup(d));
+                    list.appendChild(div);
+                });
+            } catch (err) {
+                list.innerHTML = "<p style='color:red'>⚠️ Failed to load doctors</p>";
+                console.error("Error fetching doctors:", err);
+            }
+        }
+
+        let selectedDoctor = null;
+
+        function openPopup(doctor) {
+            selectedDoctor = doctor;
+            popupContent.innerHTML = `
+    <h3>${doctor.FIRST_NAME} ${doctor.LAST_NAME}</h3>
+    <p><strong>Specialty:</strong> ${doctor.SPECIALTY || '-'}</p>
+    <p><strong>Phone:</strong> ${doctor.PHONE || '-'}</p>
+    <p><strong>Email:</strong> ${doctor.EMAIL || '-'}</p>
+    <button class="book-btn" onclick="bookAppointment()">Book Appointment</button>
+    <button class="close-btn" onclick="closePopup()">Close</button>
+  `;
+            popup.style.display = "flex";
+        }
+
+        async function bookAppointment() {
+            const patientId = localStorage.getItem("patient_id") || 1; // demo
+            const doctorId = selectedDoctor.DOCTOR_ID;
+            const today = new Date().toISOString().split("T")[0];
+
+            try {
+                const res = await fetch("http://localhost:5000/api/appointments", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        patient_id: patientId,
+                        doctor_id: doctorId,
+                        date: today,
+                        time: "10:00 AM"
+                    })
+                });
+
+                if (res.ok) {
+                    alert(`✅ Appointment booked with Dr. ${selectedDoctor.FIRST_NAME} ${selectedDoctor.LAST_NAME}`);
+                    closePopup();
+                } else {
+                    alert("❌ Failed to book appointment.");
+                }
+            } catch (err) {
+                console.error("Booking error:", err);
+                alert("⚠️ Server error while booking appointment.");
+            }
+        }
+
+        function closePopup() {
+            popup.style.display = "none";
+        }
+
+        popup.addEventListener("click", e => {
+            if (e.target === popup) closePopup();
+        });
+
+        loadDoctors();
+    </script>
+</body>
+
+</html>

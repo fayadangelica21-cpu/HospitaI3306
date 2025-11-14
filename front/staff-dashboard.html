@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Staff Dashboard</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+
+  <style>
+    :root {
+      --primary: #0A233C;
+      --primary-light: #15426e;
+      --bg: #f7f9fc;
+      --card-bg: #ffffff;
+      --border: #dde3ec;
+      --danger: #b91c1c;
+      --danger-dark: #7f1d1d;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: #222;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      min-height: 100vh;
+    }
+
+    /* SIDEBAR */
+    .sidebar {
+      background: var(--primary);
+      color: #fff;
+      padding: 24px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .sidebar-header h2 {
+      margin: 0;
+      font-size: 22px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .sidebar-header span.emoji {
+      font-size: 26px;
+    }
+
+    .sidebar-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .tab-link {
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: none;
+      background: transparent;
+      color: #cbd5f5;
+      text-align: left;
+      cursor: pointer;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: 0.15s;
+    }
+
+    .tab-link span.icon {
+      font-size: 16px;
+    }
+
+    .tab-link:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+    }
+
+    .tab-link.active {
+      background: #fff;
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .sidebar-footer {
+      margin-top: auto;
+      font-size: 12px;
+      opacity: 0.7;
+    }
+
+    /* MAIN CONTENT */
+    .content {
+      padding: 24px 32px 40px;
+      overflow-x: hidden;
+    }
+
+    .content-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .content-header h1 {
+      margin: 0;
+      font-size: 24px;
+      color: var(--primary);
+    }
+
+    .badge {
+      font-size: 12px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: #e5efff;
+      color: var(--primary);
+    }
+
+    /* CARDS */
+    .cards-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: 12px;
+      padding: 14px 16px;
+      border: 1px solid var(--border);
+      box-shadow: 0 2px 4px rgba(15, 23, 42, 0.05);
+    }
+
+    .card-label {
+      font-size: 12px;
+      color: #6b7280;
+      margin-bottom: 6px;
+    }
+
+    .card-value {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--primary);
+    }
+
+    /* TABS SECTIONS */
+    .tab {
+      display: none;
+      margin-top: 8px;
+    }
+
+    .tab.active {
+      display: block;
+    }
+
+    h2.section-title {
+      font-size: 18px;
+      margin: 14px 0 6px;
+      color: var(--primary);
+    }
+
+    p.section-subtitle {
+      margin: 0 0 10px;
+      font-size: 13px;
+      color: #6b7280;
+    }
+
+    /* TABLES */
+    .table-wrapper {
+      background: var(--card-bg);
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      box-shadow: 0 2px 4px rgba(15, 23, 42, 0.05);
+      overflow: hidden;
+      margin-top: 8px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    thead {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    th,
+    td {
+      padding: 9px 10px;
+      border-bottom: 1px solid #e5e7eb;
+      text-align: left;
+    }
+
+    tbody tr:hover {
+      background: #f3f4f6;
+      cursor: pointer;
+    }
+
+    tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    .table-empty {
+      padding: 16px;
+      font-size: 13px;
+      color: #6b7280;
+    }
+
+    /* FORMS */
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 10px;
+      margin: 10px 0 8px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      font-size: 13px;
+    }
+
+    label {
+      font-weight: 500;
+      color: #374151;
+    }
+
+    select,
+    input,
+    textarea {
+      padding: 8px 10px;
+      font-size: 13px;
+      border-radius: 8px;
+      border: 1px solid #d1d5db;
+      outline: none;
+      transition: 0.15s;
+      background: #fff;
+    }
+
+    select:focus,
+    input:focus,
+    textarea:focus {
+      border-color: var(--primary-light);
+      box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.2);
+    }
+
+    textarea {
+      min-height: 60px;
+      resize: vertical;
+    }
+
+    .form-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    button {
+      padding: 8px 16px;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: 0.15s;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-light);
+    }
+
+    .btn-secondary {
+      background: #e5e7eb;
+      color: #111827;
+    }
+
+    .btn-secondary:hover {
+      background: #d1d5db;
+    }
+
+    .btn-danger {
+      background: var(--danger);
+      color: #fff;
+    }
+
+    .btn-danger:hover {
+      background: var(--danger-dark);
+    }
+
+    .btn-disabled,
+    .btn-disabled:hover {
+      opacity: 0.5;
+      cursor: default;
+    }
+
+    /* FILTERS BAR */
+    .filters-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 8px;
+      margin: 8px 0;
+    }
+
+    .filters-row .form-group {
+      margin-bottom: 0;
+    }
+
+    .status-pill {
+      padding: 3px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 500;
+      display: inline-block;
+    }
+
+    .status-scheduled {
+      background: #e0f2fe;
+      color: #0369a1;
+    }
+
+    .status-completed {
+      background: #dcfce7;
+      color: #15803d;
+    }
+
+    .status-cancelled {
+      background: #fee2e2;
+      color: #b91c1c;
+    }
+
+    /* SEARCH INPUT */
+    .search-input {
+      padding: 7px 10px;
+      border-radius: 999px;
+      border: 1px solid #d1d5db;
+      font-size: 13px;
+      width: 220px;
+      max-width: 100%;
+    }
+
+    @media (max-width: 900px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .sidebar-nav {
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+      }
+
+      .sidebar-footer {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="layout">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <span class="emoji">👨‍💼</span>
+      <h2>Staff Dashboard</h2>
+    </div>
+
+    <nav class="sidebar-nav">
+      <button class="tab-link active" data-tab="appointments">
+        <span class="icon">📅</span> Appointments
+      </button>
+      <button class="tab-link" data-tab="doctors">
+        <span class="icon">👨‍⚕️</span> Doctors
+      </button>
+      <button class="tab-link" data-tab="patients">
+        <span class="icon">🧑‍🤝‍🧑</span> Patients
+      </button>
+      <!-- <button class="tab-link" data-tab="records">
+        <span class="icon">📚</span> Medical Records
+      </button>
+      <button class="tab-link" data-tab="feedback">
+        <span class="icon">💬</span> Feedback
+      </button> -->
+      <a href="login.html" onclick="localStorage.clear()" style="color:white;text-decoration:none;">Logout</a>
+    </nav>
+
+    <div class="sidebar-footer">
+      Logged in as: Staff<br>
+      You can manage appointments, view doctors & patients, and review records.
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="content">
+
+    <div class="content-header">
+      <div>
+        <h1>Welcome, Staff</h1>
+        <span class="badge">Clinic control panel</span>
+      </div>
+      <input id="globalSearch" class="search-input" placeholder="Quick filter in current tab...">
+    </div>
+
+    <!-- SUMMARY CARDS -->
+    <div class="cards-row">
+      <div class="card">
+        <div class="card-label">Doctors</div>
+        <div class="card-value" id="cardDoctors">–</div>
+      </div>
+      <div class="card">
+        <div class="card-label">Patients</div>
+        <div class="card-value" id="cardPatients">–</div>
+      </div>
+      <div class="card">
+        <div class="card-label">Today’s appointments</div>
+        <div class="card-value" id="cardToday">–</div>
+      </div>
+      <div class="card">
+        <div class="card-label">All appointments</div>
+        <div class="card-value" id="cardAllAppointments">–</div>
+      </div>
+    </div>
+
+    <!-- APPOINTMENTS TAB -->
+    <section id="tab-appointments" class="tab active">
+      <h2 class="section-title">Today’s Appointments</h2>
+      <p class="section-subtitle">View the schedule for today. Click any row in “All Appointments” to edit it.</p>
+
+      <div class="table-wrapper">
+        <table>
+          <thead>
+          <tr>
+            <th>Doctor</th>
+            <th>Patient</th>
+            <th>Time</th>
+            <th>Status</th>
+          </tr>
+          </thead>
+          <tbody id="todayAppointmentsBody">
+          <tr><td colspan="4" class="table-empty">Loading...</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2 class="section-title">Manage Appointments</h2>
+      <p class="section-subtitle">Book a new appointment or update / cancel an existing one.</p>
+
+      <!-- MANAGE FORM -->
+      <div class="card">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="appointmentDoctor">Doctor</label>
+            <select id="appointmentDoctor">
+              <option value="">Loading...</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="appointmentPatient">Patient</label>
+            <select id="appointmentPatient">
+              <option value="">Loading...</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="appointmentDate">Date</label>
+            <input type="date" id="appointmentDate">
+          </div>
+          <div class="form-group">
+            <label for="appointmentTime">Time</label>
+            <input type="time" id="appointmentTime">
+          </div>
+          <div class="form-group">
+            <label for="appointmentStatus">Status</label>
+            <select id="appointmentStatus">
+              <option value="scheduled">Scheduled</option>
+              <option value="completed">Completed</option>
+              <option value="cancelled">Cancelled</option>
+            </select>
+          </div>
+          <div class="form-group" style="grid-column: 1 / -1;">
+            <label for="appointmentNotes">Notes (optional)</label>
+            <textarea id="appointmentNotes" placeholder="Symptoms, instructions, etc."></textarea>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button id="btnNew" class="btn-secondary">➕ New</button>
+          <button id="btnSave" class="btn-primary">💾 Save</button>
+          <button id="btnDelete" class="btn-danger btn-disabled" disabled>🗑 Delete</button>
+        </div>
+        <small id="formMessage" style="font-size:12px;color:#6b7280;margin-top:4px;"></small>
+      </div>
+
+      <!-- FILTERS + ALL APPOINTMENTS -->
+      <h2 class="section-title" style="display: none;">All Appointments</h2>
+      <p class="section-subtitle" style="display: none;">Filter by doctor, patient, date, or status. Click a row to load it into the form.</p>
+
+      <div class="card" style="display: none;">
+        <div class="filters-row">
+          <div class="form-group">
+            <label for="filterDoctor">Doctor</label>
+            <select id="filterDoctor">
+              <option value="">All</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="filterPatient">Patient</label>
+            <select id="filterPatient">
+              <option value="">All</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="filterDate">Date</label>
+            <input type="date" id="filterDate">
+          </div>
+          <div class="form-group">
+            <label for="filterStatus">Status</label>
+            <select id="filterStatus">
+              <option value="">All</option>
+              <option value="scheduled">Scheduled</option>
+              <option value="completed">Completed</option>
+              <option value="cancelled">Cancelled</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="table-wrapper" style="margin-top:10px; display: none;">
+        <table>
+          <thead>
+          <tr>
+            <th>Doctor</th>
+            <th>Patient</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Status</th>
+          </tr>
+          </thead>
+          <tbody id="allAppointmentsBody">
+          <tr><td colspan="5" class="table-empty">Loading...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- DOCTORS TAB -->
+    <section id="tab-doctors" class="tab">
+      <h2 class="section-title">Doctors</h2>
+      <p class="section-subtitle">List of all doctors in the clinic.</p>
+
+      <div class="table-wrapper">
+        <table>
+          <thead>
+          <tr>
+            <th>Name</th>
+            <th>Specialty</th>
+            <th>Phone</th>
+            <th>Email</th>
+          </tr>
+          </thead>
+          <tbody id="doctorsTableBody">
+          <tr><td colspan="4" class="table-empty">Loading...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- PATIENTS TAB -->
+    <section id="tab-patients" class="tab">
+      <h2 class="section-title">Patients</h2>
+      <p class="section-subtitle">All registered patients. Use this when you want to review who is in the system.</p>
+
+      <div class="table-wrapper">
+        <table>
+          <thead>
+          <tr>
+            <th>Name</th>
+            <th>Gender</th>
+            <th>Phone</th>
+            <th>Address</th>
+          </tr>
+          </thead>
+          <tbody id="patientsTableBody">
+          <tr><td colspan="4" class="table-empty">Loading...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- MEDICAL RECORDS TAB -->
+    <section id="tab-records" class="tab">
+      <h2 class="section-title">Medical Records</h2>
+      <p class="section-subtitle">View patients medical files.</p>
+
+      <div class="table-wrapper">
+        <table>
+          <thead>
+          <tr>
+            <th>Date</th>
+            <th>Patient</th>
+            <th>Doctor</th>
+            <th>Description</th>
+            <th>File</th>
+          </tr>
+          </thead>
+          <tbody id="recordsTableBody">
+          <tr><td colspan="5" class="table-empty">Loading...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- FEEDBACK TAB -->
+    <section id="tab-feedback" class="tab">
+      <h2 class="section-title">Feedback & Comments</h2>
+      <p class="section-subtitle">Patients’ comments and feedback.</p>
+
+      <div class="table-wrapper">
+        <table>
+          <thead>
+          <tr>
+            <th>Date</th>
+            <th>Author</th>
+            <th>Patient</th>
+            <th>Content</th>
+          </tr>
+          </thead>
+          <tbody id="feedbackTableBody">
+          <tr><td colspan="4" class="table-empty">Loading...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+  const API = "http://localhost:5000/api";
+// Working hours (must match backend logic)
+const WORKING_HOURS = [
+  "09:00", "09:30", "10:00", "10:30",
+  "11:00", "11:30", "12:00", "12:30",
+  "13:00", "13:30", "14:00", "14:30",
+  "15:00", "15:30", "16:00", "16:30"
+];
+
+  // DOM SHORTCUTS
+  const tabLinks = document.querySelectorAll(".tab-link");
+  const tabs = document.querySelectorAll(".tab");
+  const globalSearchInput = document.getElementById("globalSearch");
+
+  // Cards
+  const cardDoctors = document.getElementById("cardDoctors");
+  const cardPatients = document.getElementById("cardPatients");
+  const cardToday = document.getElementById("cardToday");
+  const cardAllAppointments = document.getElementById("cardAllAppointments");
+
+  // Appointments DOM
+  const todayBody = document.getElementById("todayAppointmentsBody");
+  const allAppointmentsBody = document.getElementById("allAppointmentsBody");
+
+  const appointmentDoctor = document.getElementById("appointmentDoctor");
+  const appointmentPatient = document.getElementById("appointmentPatient");
+  const appointmentDate = document.getElementById("appointmentDate");
+  const appointmentTime = document.getElementById("appointmentTime");
+  const appointmentStatus = document.getElementById("appointmentStatus");
+  const appointmentNotes = document.getElementById("appointmentNotes");
+
+  const btnNew = document.getElementById("btnNew");
+  const btnSave = document.getElementById("btnSave");
+  const btnDelete = document.getElementById("btnDelete");
+  const formMessage = document.getElementById("formMessage");
+
+  // Filters
+  const filterDoctor = document.getElementById("filterDoctor");
+  const filterPatient = document.getElementById("filterPatient");
+  const filterDate = document.getElementById("filterDate");
+  const filterStatus = document.getElementById("filterStatus");
+
+  // Other tables
+  const doctorsTableBody = document.getElementById("doctorsTableBody");
+  const patientsTableBody = document.getElementById("patientsTableBody");
+  const recordsTableBody = document.getElementById("recordsTableBody");
+  const feedbackTableBody = document.getElementById("feedbackTableBody");
+
+  let editingAppointmentId = null;
+  let doctorsCache = [];
+  let patientsCache = [];
+  let allAppointmentsCache = [];
+
+  // Helper to handle fetch
+  async function safeFetch(url, options = {}) {
+    try {
+      const res = await fetch(url, options);
+      if (!res.ok) {
+        console.error("Request failed:", url, res.status);
+        return null;
+      }
+      return await res.json();
+    } catch (err) {
+      console.error("Network error:", err);
+      return null;
+    }
+  }
+
+  // Switch tabs
+  tabLinks.forEach(btn => {
+    btn.addEventListener("click", () => {
+      const target = btn.dataset.tab;
+      tabLinks.forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      tabs.forEach(t => t.classList.remove("active"));
+      document.getElementById("tab-" + target).classList.add("active");
+      globalSearchInput.value = "";
+      applyGlobalSearch();
+    });
+  });
+
+  // Global search in current tab (simple filter)
+  globalSearchInput.addEventListener("input", applyGlobalSearch);
+
+  function applyGlobalSearch() {
+    const term = globalSearchInput.value.trim().toLowerCase();
+    const activeTab = document.querySelector(".tab.active");
+    if (!activeTab) return;
+
+    const rows = activeTab.querySelectorAll("tbody tr");
+    rows.forEach(row => {
+      if (row.dataset.noFilter === "true") return; // for "Loading..." etc.
+      const text = row.innerText.toLowerCase();
+      row.style.display = term && !text.includes(term) ? "none" : "";
+    });
+  }
+
+  // ========== LOAD DROPDOWNS ==========
+  async function loadDoctorDropdowns() {
+    const data = await safeFetch(API + "/doctors");
+    if (!data) return;
+    // For manage appointment
+    appointmentDoctor.innerHTML = '<option value="">Select doctor</option>';
+    data.forEach(d => {
+      appointmentDoctor.insertAdjacentHTML(
+        "beforeend",
+        `<option value="${d.doctor_id}">${d.first_name} ${d.last_name}</option>`
+      );
+    });
+    // For filter
+    filterDoctor.innerHTML = '<option value="">All</option>';
+    data.forEach(d => {
+      filterDoctor.insertAdjacentHTML(
+        "beforeend",
+        `<option value="${d.doctor_id}">${d.first_name} ${d.last_name}</option>`
+      );
+    });
+  }
+
+  async function loadPatientDropdowns() {
+    const data = await safeFetch(API + "/patients");
+    if (!data) return;
+    appointmentPatient.innerHTML = '<option value="">Select patient</option>';
+    data.forEach(p => {
+      appointmentPatient.insertAdjacentHTML(
+        "beforeend",
+        `<option value="${p.patient_id}">${p.first_name} ${p.last_name}</option>`
+      );
+    });
+
+    filterPatient.innerHTML = '<option value="">All</option>';
+    data.forEach(p => {
+      filterPatient.insertAdjacentHTML(
+        "beforeend",
+        `<option value="${p.patient_id}">${p.first_name} ${p.last_name}</option>`
+      );
+    });
+  }
+
+  // ========== LOAD TODAY APPOINTMENTS ==========
+  async function loadTodayAppointments() {
+    const list = await safeFetch(API + "/staff/appointments/today");
+    todayBody.innerHTML = "";
+
+    if (!list || list.length === 0) {
+      todayBody.innerHTML = `<tr><td colspan="4" class="table-empty" data-no-filter="true">No appointments for today.</td></tr>`;
+      cardToday.textContent = "0";
+      return;
+    }
+
+    cardToday.textContent = list.length.toString();
+
+    list.forEach(a => {
+      const doctorName = a.DOCTOR_NAME || a.doctor || "-";
+      const patientName = a.PATIENT_NAME || a.patient || "-";
+      const time = a.APPOINTMENT_TIME || a.time || "-";
+      const status = (a.STATUS || "scheduled").toLowerCase();
+      const statusClass =
+        status === "completed" ? "status-completed" :
+          status === "cancelled" ? "status-cancelled" : "status-scheduled";
+
+      todayBody.insertAdjacentHTML(
+        "beforeend",
+        `<tr>
+          <td>${doctorName}</td>
+          <td>${patientName}</td>
+          <td>${time}</td>
+          <td><span class="status-pill ${statusClass}">${status}</span></td>
+        </tr>`
+      );
+    });
+  }
+
+  // ========== LOAD ALL APPOINTMENTS ==========
+  async function loadAllAppointments() {
+    const params = new URLSearchParams();
+    if (filterDoctor.value) params.append("doctor_id", filterDoctor.value);
+    if (filterPatient.value) params.append("patient_id", filterPatient.value);
+    if (filterDate.value) params.append("date", filterDate.value);
+    if (filterStatus.value) params.append("status", filterStatus.value);
+
+    const url = API + "/appointments" + (params.toString() ? "?" + params.toString() : "");
+    const list = await safeFetch(url);
+    allAppointmentsBody.innerHTML = "";
+
+    if (!list || list.length === 0) {
+      allAppointmentsBody.innerHTML =
+        `<tr><td colspan="5" class="table-empty" data-no-filter="true">No appointments found.</td></tr>`;
+      cardAllAppointments.textContent = "0";
+      allAppointmentsCache = [];
+      return;
+    }
+
+    allAppointmentsCache = list;
+    cardAllAppointments.textContent = list.length.toString();
+
+    list.forEach(a => {
+      const status = (a.status || "scheduled").toLowerCase();
+      const statusClass =
+        status === "completed" ? "status-completed" :
+          status === "cancelled" ? "status-cancelled" : "status-scheduled";
+
+      const date = a.date || "";
+      const time = a.time || "";
+      const doctor = a.doctor || a.doctor_name || "-";
+      const patient = a.patient || a.patient_name || "-";
+
+      allAppointmentsBody.insertAdjacentHTML(
+        "beforeend",
+        `<tr data-id="${a.appointment_id}">
+          <td>${doctor}</td>
+          <td>${patient}</td>
+          <td>${date}</td>
+          <td>${time}</td>
+          <td><span class="status-pill ${statusClass}">${status}</span></td>
+        </tr>`
+      );
+    });
+
+    // Attach click handlers for edit
+    allAppointmentsBody.querySelectorAll("tr").forEach(row => {
+      row.addEventListener("click", () => {
+        const id = row.getAttribute("data-id");
+        const appt = allAppointmentsCache.find(a => String(a.appointment_id) === String(id));
+        if (!appt) return;
+
+        editingAppointmentId = appt.appointment_id;
+        appointmentDoctor.value = appt.doctor_id || "";
+        appointmentPatient.value = appt.patient_id || "";
+        appointmentDate.value = appt.date || "";
+        appointmentTime.value = appt.time || "";
+        appointmentStatus.value = (appt.status || "scheduled").toLowerCase();
+        // notes are not returned from list endpoint, so leave as-is
+        formMessage.textContent = "Editing appointment #" + appt.appointment_id;
+        btnDelete.classList.remove("btn-disabled");
+        btnDelete.disabled = false;
+      });
+    });
+  }
+
+  // ========== LOAD DOCTORS / PATIENTS TABLES ==========
+  async function loadStaffDoctorsTable() {
+    const data = await safeFetch(API + "/doctors");
+    doctorsTableBody.innerHTML = "";
+    if (!data || data.length === 0) {
+      doctorsTableBody.innerHTML =
+        `<tr><td colspan="4" class="table-empty" data-no-filter="true">No doctors found.</td></tr>`;
+      cardDoctors.textContent = "0";
+      return;
+    }
+    doctorsCache = data;
+    cardDoctors.textContent = data.length.toString();
+
+    data.forEach(d => {
+      const name = `${d.FIRST_NAME || d.first_name || ""} ${d.LAST_NAME || d.last_name || ""}`.trim();
+      doctorsTableBody.insertAdjacentHTML(
+        "beforeend",
+        `<tr>
+          <td>${name}</td>
+          <td>${d.SPECIALTY || d.specialty || "-"}</td>
+          <td>${d.PHONE || d.phone || "-"}</td>
+          <td>${d.EMAIL || d.email || "-"}</td>
+        </tr>`
+      );
+    });
+  }
+
+  async function loadStaffPatientsTable() {
+    const data = await safeFetch(API + "/patients");
+    patientsTableBody.innerHTML = "";
+    if (!data || data.length === 0) {
+      patientsTableBody.innerHTML =
+        `<tr><td colspan="4" class="table-empty" data-no-filter="true">No patients found.</td></tr>`;
+      cardPatients.textContent = "0";
+      return;
+    }
+    patientsCache = data;
+    cardPatients.textContent = data.length.toString();
+
+    data.forEach(p => {
+      const name = `${p.FIRST_NAME || p.first_name || ""} ${p.LAST_NAME || p.last_name || ""}`.trim();
+      const gender = p.GENDER || p.gender || "-";
+      patientsTableBody.insertAdjacentHTML(
+        "beforeend",
+        `<tr>
+          <td>${name}</td>
+          <td>${gender}</td>
+          <td>${p.PHONE || p.phone || "-"}</td>
+          <td>${p.ADDRESS || p.address || "-"}</td>
+        </tr>`
+      );
+    });
+  }
+
+  // ========== LOAD MEDICAL RECORDS / FEEDBACK ==========
+  async function loadRecordsTable() {
+    const data = await safeFetch(API + "/medical-records");
+    recordsTableBody.innerHTML = "";
+    if (!data || data.length === 0) {
+      recordsTableBody.innerHTML =
+        `<tr><td colspan="5" class="table-empty" data-no-filter="true">No records found.</td></tr>`;
+      return;
+    }
+
+    data.forEach(r => {
+      const date = r.RECORD_DATE || r.record_date || "";
+      const patient = r.PATIENT || r.patient || "-";
+      const doctor = r.DOCTOR || r.doctor || "-";
+      const desc = r.DESCRIPTION || r.description || "-";
+      const file = r.FILE_PATH || r.file_path || "";
+
+      recordsTableBody.insertAdjacentHTML(
+        "beforeend",
+        `<tr>
+          <td>${date}</td>
+          <td>${patient}</td>
+          <td>${doctor}</td>
+          <td>${desc}</td>
+          <td>${file ? `<a href="${file}" target="_blank">Open</a>` : "-"}</td>
+        </tr>`
+      );
+    });
+  }
+
+  async function loadFeedbackTable() {
+    const data = await safeFetch(API + "/feedback");
+    feedbackTableBody.innerHTML = "";
+    if (!data || data.length === 0) {
+      feedbackTableBody.innerHTML =
+        `<tr><td colspan="4" class="table-empty" data-no-filter="true">No feedback found.</td></tr>`;
+      return;
+    }
+
+    data.forEach(c => {
+      const date = c.DATE || c.date || "";
+      const author = c.AUTHOR || c.author || "-";
+      const patient = c.PATIENT || c.patient || "-";
+      const content = c.CONTENT || c.content || "-";
+
+      feedbackTableBody.insertAdjacentHTML(
+        "beforeend",
+        `<tr>
+          <td>${date}</td>
+          <td>${author}</td>
+          <td>${patient}</td>
+          <td>${content}</td>
+        </tr>`
+      );
+    });
+  }
+
+  // ========== FORM HANDLERS ==========
+  function resetForm() {
+    editingAppointmentId = null;
+    appointmentDoctor.value = "";
+    appointmentPatient.value = "";
+    appointmentDate.value = "";
+    appointmentTime.value = "";
+    appointmentStatus.value = "scheduled";
+    appointmentNotes.value = "";
+    formMessage.textContent = "Creating a new appointment.";
+    btnDelete.classList.add("btn-disabled");
+    btnDelete.disabled = true;
+  }
+
+  btnNew.addEventListener("click", (e) => {
+    e.preventDefault();
+    resetForm();
+  });
+
+btnSave.addEventListener("click", async (e) => {
+  e.preventDefault();
+
+  const body = {
+    doctor_id: appointmentDoctor.value,
+    patient_id: appointmentPatient.value,
+    date: appointmentDate.value,
+    time: appointmentTime.value,
+    status: appointmentStatus.value,
+    notes: appointmentNotes.value || ""
+  };
+
+  // 1) Basic validation
+  if (!body.doctor_id || !body.patient_id || !body.date || !body.time) {
+    formMessage.textContent = "Please fill doctor, patient, date, and time.";
+    formMessage.style.color = "#b91c1c";
+    return;
+  }
+
+  // 2) Working hours validation
+  if (!WORKING_HOURS.includes(body.time)) {
+    formMessage.textContent = "Time must be between 09:00 and 16:30 in 30-minute steps.";
+    formMessage.style.color = "#b91c1c";
+    return;
+  }
+
+  try {
+    // 3) For NEW appointments: check if slot already booked (using backend free-slots)
+    if (!editingAppointmentId) {
+      const freeSlots = await safeFetch(
+        `${API}/doctor/${body.doctor_id}/free-slots?date=${body.date}`
+      );
+
+      if (Array.isArray(freeSlots) && !freeSlots.includes(body.time)) {
+        formMessage.textContent = "This time slot is already booked for this doctor.";
+        formMessage.style.color = "#b91c1c";
+        return;
+      }
+    }
+
+    // 4) Call backend (create or update)
+    if (!editingAppointmentId) {
+      // CREATE
+      const res = await fetch(API + "/appointments", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body)
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || "Failed to add appointment");
+      }
+      formMessage.textContent = "Appointment created successfully.";
+    } else {
+      // UPDATE
+      const res = await fetch(API + "/appointments/" + editingAppointmentId, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body)
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || "Failed to update appointment");
+      }
+      formMessage.textContent = "Appointment updated successfully.";
+    }
+
+    formMessage.style.color = "#15803d";
+    await loadTodayAppointments();
+    await loadAllAppointments();
+    resetForm();
+  } catch (err) {
+    console.error(err);
+    formMessage.textContent = err.message;
+    formMessage.style.color = "#b91c1c";
+  }
+});
+
+  btnDelete.addEventListener("click", async (e) => {
+    e.preventDefault();
+    if (!editingAppointmentId) return;
+    if (!confirm("Delete this appointment?")) return;
+
+    try {
+      const res = await fetch(API + "/appointments/" + editingAppointmentId, {
+        method: "DELETE"
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || "Failed to delete appointment");
+      }
+      formMessage.textContent = "Appointment deleted.";
+      formMessage.style.color = "#15803d";
+      await loadTodayAppointments();
+      await loadAllAppointments();
+      resetForm();
+    } catch (err) {
+      formMessage.textContent = err.message;
+      formMessage.style.color = "#b91c1c";
+    }
+  });
+
+  // Filters change handlers
+  [filterDoctor, filterPatient, filterDate, filterStatus].forEach(el => {
+    el.addEventListener("change", () => {
+      loadAllAppointments();
+    });
+  });
+
+  // INITIAL LOAD
+  (async function init() {
+    resetForm();
+    await Promise.all([
+      loadDoctorDropdowns(),
+      loadPatientDropdowns(),
+      loadTodayAppointments(),
+      loadAllAppointments(),
+      loadStaffDoctorsTable(),
+      loadStaffPatientsTable(),
+      loadRecordsTable(),
+      loadFeedbackTable()
+    ]);
+  })();
+</script>
+
+</body>
+</html>

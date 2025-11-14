@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Doctor Dashboard | Quanta HIMS</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #eef2f7;
+      margin: 0;
+      padding: 0;
+    }
+
+    .header {
+      background: #0A233C;
+      color: white;
+      padding: 18px;
+      text-align: center;
+      font-size: 22px;
+      letter-spacing: 1px;
+    }
+
+    .container {
+      padding: 25px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+    }
+
+    .card h3 {
+      color: #0A233C;
+      margin-bottom: 10px;
+      border-bottom: 2px solid #0A233C;
+      padding-bottom: 5px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th,
+    td {
+      padding: 8px;
+      border-bottom: 1px solid #ddd;
+      text-align: left;
+      font-size: 14px;
+    }
+
+    th {
+      background: #0A233C;
+      color: white;
+    }
+
+    .profile-info p {
+      margin: 6px 0;
+      font-size: 15px;
+    }
+  </style>
+</head>
+
+<body>
+  <nav style="background:#0A233C;padding:12px;color:white;display:flex;justify-content:space-between;">
+    <span>👨‍⚕️ Doctor Panel</span>
+    <a href="login.html" onclick="localStorage.clear()" style="color:white;text-decoration:none;">Logout</a>
+  </nav>
+
+  <div class="container">
+    <div class="card">
+      <h3>Doctor Profile</h3>
+      <div class="profile-info" id="doctorProfile">
+        <p><strong>Name:</strong> - </p>
+        <p><strong>Specialty:</strong> - </p>
+        <p><strong>Email:</strong> - </p>
+        <p><strong>Phone:</strong> - </p>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>My Patients</h3>
+      <table id="patientsTable">
+        <thead>
+          <tr>
+            <th>Patient</th>
+            <th>Gender</th>
+            <th>Phone</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3>Today’s Appointments</h3>
+      <table id="appointmentsTable">
+        <thead>
+          <tr>
+            <th>Patient</th>
+            <th>Time</th>
+            <th>Reason</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td colspan="3">No appointments today</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <footer style="text-align:center;padding:15px;background:#0A233C;color:white;margin-top:25px;">
+    Quanta Health Information System © 2025
+  </footer>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+      const doctorId = localStorage.getItem("doctor_id");
+      if (!doctorId) return alert("❌ Doctor ID missing. Please login again.");
+
+      try {
+        const res = await fetch(`http://localhost:5000/api/doctor/${doctorId}/dashboard`);
+        const data = await res.json();
+
+        // Profile
+        const profileDiv = document.getElementById("doctorProfile");
+        profileDiv.innerHTML = `
+          <p><strong>Name:</strong> ${data.profile.FIRST_NAME} ${data.profile.LAST_NAME}</p>
+          <p><strong>Specialty:</strong> ${data.profile.SPECIALTY? data.profile.SPECIALTY:'Public Health'}</p>
+          <p><strong>Email:</strong> ${data.profile.EMAIL}</p>
+          <p><strong>Phone:</strong> ${data.profile.PHONE}</p>
+        `;
+
+        // Patients
+        const tbody = document.querySelector("#patientsTable tbody");
+        console.log(data)
+        data.patients.forEach(p => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${p.FIRST_NAME} ${p.LAST_NAME}</td>
+            <td>${p.GENDER || '-'}</td>
+            <td>${p.PHONE || '-'}</td>`;
+          tbody.appendChild(tr);
+        });
+        // Appointments
+        const appointmentsBody = document.querySelector("#appointmentsTable tbody");
+        appointmentsBody.innerHTML = ""; // clear default
+
+        if (data.appointments.length === 0) {
+          appointmentsBody.innerHTML = `<tr><td colspan="3">No appointments today</td></tr>`;
+        } else {
+          data.appointments.forEach(a => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+      <td>${a.PATIENT_NAME}</td>
+      <td>${a.APPOINTMENT_TIME}</td>
+      <td>${a.STATUS}</td>
+    `;
+            appointmentsBody.appendChild(tr);
+          });
+        }
+
+      } catch (err) {
+        console.error(err);
+        alert("❌ Error loading doctor data!");
+      }
+    });
+  </script>
+</body>
+
+</html>

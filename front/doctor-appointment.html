@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Doctor - Appointments</title>
+<style>
+body { padding: 20px; font-family: Arial; }
+table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+th, td { padding: 10px; border: 1px solid #ccc; }
+tr:hover { background: #eee; cursor: pointer; }
+select, input, button { padding: 10px; margin-top: 10px; }
+</style>
+</head>
+<body>
+
+<h2>👨‍⚕️ My Appointments</h2>
+<table>
+<thead>
+<tr>
+  <th>Patient</th>
+  <th>Date</th>
+  <th>Time</th>
+  <th>Status</th>
+  <th>Action</th>
+</tr>
+</thead>
+<tbody id="apptTable"></tbody>
+</table>
+
+<h3>🗓 Check Available Time Slots</h3>
+<input type="date" id="date">
+<button onclick="loadSlots()">Check</button>
+<select id="slots"></select>
+
+<script>
+const API = "http://localhost:5000/api";
+const doctor_id = localStorage.getItem("doctor_id"); // doctor login sets this
+
+async function loadAppointments(){
+  const res = await fetch(`${API}/doctor/${doctor_id}/appointments`);
+  const list = await res.json();
+  apptTable.innerHTML = "";
+  list.forEach(a => {
+    apptTable.insertAdjacentHTML("beforeend", `
+      <tr>
+        <td>${a.patient}</td>
+        <td>${a.date}</td>
+        <td>${a.time}</td>
+        <td>${a.status}</td>
+        <td>
+          <select onchange="updateStatus(${a.appointment_id}, this.value)">
+            <option disabled selected>Change</option>
+            <option value="scheduled">Scheduled</option>
+            <option value="completed">Completed</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+        </td>
+      </tr>
+    `);
+  });
+}
+
+async function loadSlots(){
+  const dateVal = date.value;
+  if(!dateVal) return;
+  const res = await fetch(`${API}/doctor/${doctor_id}/free-slots?date=${dateVal}`);
+  const list = await res.json();
+  slots.innerHTML = "";
+  list.forEach(t => slots.insertAdjacentHTML("beforeend", `<option>${t}</option>`));
+}
+
+async function updateStatus(id, status){
+  await fetch(`${API}/doctor/appointments/${id}/status`, {
+    method:"PUT", headers:{ "Content-Type":"application/json" },
+    body: JSON.stringify({status})
+  });
+  loadAppointments();
+}
+
+loadAppointments();
+</script>
+
+</body>
+</html>

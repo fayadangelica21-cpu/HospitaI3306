@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QUANTA V5.0 - Login</title>
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+
+    <style>
+        /* ====== GLOBAL STYLES ====== */
+        * {
+            box-sizing: border-box;
+            font-family: 'Open Sans', sans-serif;
+        }
+
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: url('background.jpg') no-repeat center center/cover;
+            backdrop-filter: blur(2px);
+            overflow: hidden;
+        }
+
+        /* ====== LOGIN CONTAINER ====== */
+        .login-container {
+            background: rgba(255, 255, 255, 0.96);
+            border-radius: 10px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+            width: 360px;
+            padding: 40px 35px;
+            text-align: center;
+            animation: fadeInUp 1s ease forwards;
+            transform-style: preserve-3d;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .login-container:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+        }
+
+        /* ====== LOGO + HEADER ====== */
+        .logo {
+            width: 110px;
+            height: 110px;
+            margin: 0 auto 10px;
+            background: url('https://upload.wikimedia.org/wikipedia/commons/a/ac/No_image_available.svg') no-repeat center/contain;
+        }
+
+        h1 {
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+
+        h2 {
+            font-size: 13px;
+            font-weight: 500;
+            color: #555;
+            margin: 0 0 20px 0;
+        }
+
+        h3 {
+            font-size: 22px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        /* ====== FORM STYLES ====== */
+        form {
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+        }
+
+        label {
+            font-size: 14px;
+            margin-bottom: 6px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            outline: none;
+            transition: border-color 0.3s, box-shadow 0.3s;
+            font-size: 15px;
+        }
+
+        input[type="text"]:focus,
+        input[type="password"]:focus {
+            border-color: #1d70b8;
+            box-shadow: 0 0 6px rgba(29, 112, 184, 0.3);
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 10px;
+            border: none;
+            background: linear-gradient(90deg, #004aad, #1d70b8);
+            color: white;
+            font-size: 15px;
+            font-weight: 600;
+            border-radius: 4px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: background 0.3s, transform 0.2s;
+        }
+
+        button:hover {
+            background: linear-gradient(90deg, #1d70b8, #004aad);
+            transform: translateY(-2px);
+        }
+
+        /* ====== ANIMATIONS ====== */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ====== RESPONSIVE ====== */
+        @media (max-width: 480px) {
+            .login-container {
+                width: 90%;
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="login-container" id="card">
+        <!-- Logo (replace with your real logo) -->
+        <img src="https://i.ibb.co/TwLp8K2/quanta-logo.png" alt="QUANTA Logo" class="logo">
+
+        <!-- Titles -->
+        <h1>QUANTA V5.0</h1>
+        <h2>CLOUD HIMS<br><small>Powered by Srirosoft</small></h2>
+        <h3>LOGIN</h3>
+
+        <!-- Form -->
+        <form id="loginForm">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" placeholder="Enter username" required>
+
+            <label for="password" style="margin-top:12px;">Password:</label>
+            <input type="password" id="password" name="password" placeholder="Enter password" required>
+
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+
+    <script>
+        // Subtle 3D tilt on mouse move
+        const card = document.getElementById("card");
+        card.addEventListener("mousemove", e => {
+            const rect = card.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            const centerX = rect.width / 2;
+            const centerY = rect.height / 2;
+            const rotateX = (y - centerY) / 20;
+            const rotateY = (centerX - x) / 20;
+            card.style.transform = rotateX(${ rotateX }deg) rotateY(${ rotateY }deg) scale(1.02);
+        });
+
+        card.addEventListener("mouseleave", () => {
+            card.style.transform = "rotateX(0deg) rotateY(0deg) scale(1)";
+        });
+
+        // Fake submit for demo
+        document.getElementById("loginForm").addEventListener("submit", e => {
+            e.preventDefault();
+            alert("Login successful (demo only)");
+        });
+    </script>
+</body>
+
+</html>

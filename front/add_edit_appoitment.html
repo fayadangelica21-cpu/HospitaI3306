@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Add / Edit Appointment</title>
+    <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+
+    <h2>🗓 Manage Appointments</h2>
+
+    <div class="form-container">
+        <select id="doctor">
+            <option value="">Select Doctor</option>
+        </select>
+
+        <select id="patient">
+            <option value="">Select Patient</option>
+        </select>
+
+        <input type="date" id="date" />
+        <input type="time" id="time" />
+
+        <select id="status">
+            <option value="scheduled">Scheduled</option>
+            <option value="completed">Completed</option>
+            <option value="cancelled">Cancelled</option>
+        </select>
+
+        <textarea id="notes" placeholder="Notes (optional)"></textarea>
+
+        <button id="saveBtn">Save</button>
+        <button id="deleteBtn" style="display:none; background:red;">Delete</button>
+    </div>
+
+    <h3>📋 All Appointments</h3>
+    <table border="1" width="100%">
+        <thead>
+            <tr>
+                <th>Doctor</th>
+                <th>Patient</th>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody id="appointmentsTable"></tbody>
+    </table>
+
+    <script>
+        const API = "http://localhost:5000/api";
+        let editingId = null;
+
+        // ✅ Load doctors
+        async function loadDoctors() {
+            const res = await fetch(`${API}/doctors`);
+            const doctors = await res.json();
+            doctors.forEach(d => {
+                doctor.insertAdjacentHTML("beforeend", `<option value="${d.doctor_id}">${d.first_name} ${d.last_name}</option>`);
+            });
+        }
+
+        // ✅ Load patients
+        async function loadPatients() {
+            const res = await fetch(`${API}/patients`);
+            const patients = await res.json();
+            patients.forEach(p => {
+                patient.insertAdjacentHTML("beforeend", `<option value="${p.patient_id}">${p.first_name} ${p.last_name}</option>`);
+            });
+        }
+
+
+        // ✅ Load appointments
+        async function loadAppointments() {
+            const res = await fetch(`${API}/appointments`);
+            const list = await res.json();
+            appointmentsTable.innerHTML = "";
+            list.forEach(a => {
+                appointmentsTable.insertAdjacentHTML("beforeend", `
+      <tr onclick="edit(${a.appointment_id}, '${a.date}', '${a.time}', '${a.status}', '${a.doctor}', '${a.patient}')">
+        <td>${a.doctor}</td>
+        <td>${a.patient}</td>
+        <td>${a.date}</td>
+        <td>${a.time}</td>
+        <td>${a.status}</td>
+      </tr>
+    `);
+            });
+        }
+
+        // ✅ Edit existing appointment
+        function edit(id, date, time, status) {
+            editingId = id;
+            document.getElementById("date").value = date;
+            document.getElementById("time").value = time;
+            document.getElementById("status").value = status;
+            saveBtn.textContent = "Update";
+            deleteBtn.style.display = "inline-block";
+        }
+
+        // ✅ Save (Add or Update)
+        saveBtn.onclick = async () => {
+            const body = {
+                doctor_id: doctor.value,
+                patient_id: patient.value,
+                date: date.value,
+                time: time.value,
+                status: status.value,
+                notes: notes.value
+            };
+
+            if (!editingId) {
+                await fetch(`${API}/appointments`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+            } else {
+                await fetch(`${API}/appointments/${editingId}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+            }
+
+            reset();
+            loadAppointments();
+        };
+
+        // ✅ Delete
+        deleteBtn.onclick = async () => {
+            await fetch(`${API}/appointments/${editingId}`, { method: "DELETE" });
+            reset();
+            loadAppointments();
+        };
+
+        function reset() {
+            editingId = null;
+            saveBtn.textContent = "Save";
+            deleteBtn.style.display = "none";
+            date.value = time.value = notes.value = "";
+        }
+
+        loadDoctors();
+        loadAppointments();
+        loadPatients();
+
+    </script>
+
+</body>
+
+</html>
