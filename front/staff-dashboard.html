@@ -422,13 +422,14 @@
   <!-- MAIN CONTENT -->
   <main class="content">
 
-    <div class="content-header">
+    <div class="content-header" style="margin-top: 20px;">
       <div>
-        <h1>Welcome, Staff</h1>
+        <h1>Welcome Staff</h1>
         <span class="badge">Clinic control panel</span>
       </div>
-      <input id="globalSearch" class="search-input" placeholder="Quick filter in current tab...">
+      <input id="globalSearch" class="search-input" placeholder="Quick filter in current tab..." style="display: none;">
     </div>
+    <!--To be implemented-->
 
     <!-- SUMMARY CARDS -->
     <div class="cards-row">
@@ -572,11 +573,11 @@
     </section>
 
     <!-- DOCTORS TAB -->
-    <section id="tab-doctors" class="tab">
+    <section id="tab-doctors" class="tab"  style="margin-top: 50px;">
       <h2 class="section-title">Doctors</h2>
       <p class="section-subtitle">List of all doctors in the clinic.</p>
 
-      <div class="table-wrapper">
+      <div class="table-wrapper"  style="margin-top: 15px;">
         <table>
           <thead>
           <tr>
@@ -594,18 +595,18 @@
     </section>
 
     <!-- PATIENTS TAB -->
-    <section id="tab-patients" class="tab">
+    <section id="tab-patients" class="tab" style="margin-top: 50px;">
       <h2 class="section-title">Patients</h2>
       <p class="section-subtitle">All registered patients. Use this when you want to review who is in the system.</p>
 
-      <div class="table-wrapper">
+      <div class="table-wrapper"  style="margin-top: 15px;" >
         <table>
           <thead>
           <tr>
             <th>Name</th>
             <th>Gender</th>
             <th>Phone</th>
-            <th>Address</th>
+            <th>Age</th>
           </tr>
           </thead>
           <tbody id="patientsTableBody">
@@ -639,16 +640,15 @@
     </section>
 
     <!-- FEEDBACK TAB -->
-    <section id="tab-feedback" class="tab">
+    <section id="tab-feedback" class="tab" style="margin-top: 50px;">
       <h2 class="section-title">Feedback & Comments</h2>
       <p class="section-subtitle">Patients’ comments and feedback.</p>
 
-      <div class="table-wrapper">
+      <div class="table-wrapper" style="margin-top: 15px;">
         <table>
           <thead>
           <tr>
             <th>Date</th>
-            <th>Author</th>
             <th>Patient</th>
             <th>Content</th>
           </tr>
@@ -952,7 +952,7 @@ const WORKING_HOURS = [
           <td>${name}</td>
           <td>${gender}</td>
           <td>${p.PHONE || p.phone || "-"}</td>
-          <td>${p.ADDRESS || p.address || "-"}</td>
+          <td>${p.age || p.age || "-"}</td>
         </tr>`
       );
     });
@@ -998,16 +998,14 @@ const WORKING_HOURS = [
     }
 
     data.forEach(c => {
-      const date = c.DATE || c.date || "";
-      const author = c.AUTHOR || c.author || "-";
-      const patient = c.PATIENT || c.patient || "-";
+      const date = c.COMMENT_DATE || c.date || "";
+      const patient = c.PATIENT_NAME || c.patient || "-";
       const content = c.CONTENT || c.content || "-";
 
       feedbackTableBody.insertAdjacentHTML(
         "beforeend",
         `<tr>
           <td>${date}</td>
-          <td>${author}</td>
           <td>${patient}</td>
           <td>${content}</td>
         </tr>`

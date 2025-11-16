@@ -319,7 +319,7 @@ app.get("/api/patients", async (req, res) => {
   try {
     conn = await getConnection();
     const result = await conn.execute(
-      `SELECT patient_id, first_name, last_name 
+      `SELECT * 
        FROM patients ORDER BY first_name`,
       [],
       { outFormat: oracledb.OUT_FORMAT_OBJECT }
