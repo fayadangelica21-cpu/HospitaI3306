@@ -35,6 +35,9 @@ The system supports four different user roles, each with different privileges an
 ====== User : System , Password : oracle ==== (role selected admin)
 
 ---
+====Git Hub Reference======
+https://github.com/fayadangelica21-cpu/HospitaI3306/
+email : angelica.fayad@st.ul.edu.lb
 
 ## 🗄️ Database Design (TP1 + TP2 + TP3)
 
