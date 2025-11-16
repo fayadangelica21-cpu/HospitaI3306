@@ -3,10 +3,15 @@
 ### Lebanese University – Faculty of Sciences III  
 **Course:** Database 2 (I3306)  
 **Lab Work TP1 + TP2 + TP3 (Final Project Submission)**  
-**Student:** Angelica Fayad
-**Instructor:** Dr N.Hakam
-**File Number** 31080 
 
+**Instructor:** Dr N.Hakam
+
+**Student:** Angelica Charbel Fayad
+**File Number** 31080 
+**Student:** Gergess Charbel Fayad
+**File Number** 32415 
+**Student:** Ata Gergess Harb
+**File Number** 30808 
 ---
 
 ## 🏥 Project Description
@@ -20,10 +25,14 @@ The system supports four different user roles, each with different privileges an
 
 | Role | Abilities | Database Access (Views / Permissions) |
 |-----|-----------|--------------------------------------|
-| **Admin** | Full management of doctors, patients, staff, appointments | Full TABLE privileges |
 | **Doctor** | View own profile, view/edit their patients’ appointment statuses | `V_DOCTOR_MY_PATIENTS` |
+====== User : drsahar , Password : 1234 ==== (role selected doctor)
+
 | **Patient** | View doctors list, view their own medical file & appointments | `V_DOCTOR_PUBLIC_PROFILE` |
-| **Staff** | Manage appointment scheduling, view daily appointment schedule | `V_TODAY_APPOINTMENTS_STAFF` |
+====== User : neharb , Password : 1234 ==== (role selected patient)
+
+| **Staff** | Manage appointment scheduling, view daily appointment schedule | ()`V_TODAY_APPOINTMENTS_STAFF` |
+====== User : System , Password : oracle ==== (role selected admin)
 
 ---
 
@@ -67,15 +76,10 @@ QuantaHIMS/
 ├── front/
 │ ├── login.html
 │ ├── signUp.html
-│ ├── admin-dashboard.html
 │ ├── doctor-dashboard.html
 │ ├── patient-dashboard.html
 │ ├── staff-dashboard.html
-│ ├── all-appointment.html
-│ ├── doctor-appointment.html
-│ ├── patient-appointment.html
-│ └── patient_view_information_medical.html
-│
+----Other Pages To Be implemented---│
 └── img/
 ## ⚙️ How to Run
 
@@ -88,7 +92,6 @@ node server.js
 
 | Role Selected | Redirect Page            |
 | ------------- | ------------------------ |
-| Admin         | `admin-dashboard.html`   |
 | Doctor        | `doctor-dashboard.html`  |
 | Patient       | `patient-dashboard.html` |
 | Staff         | `staff-dashboard.html`   |

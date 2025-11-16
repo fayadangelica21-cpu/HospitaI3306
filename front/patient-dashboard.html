@@ -306,7 +306,7 @@
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            patient_id: patientId,
+            patient_id: parseInt(patientId) ,
             doctor_id: doctorId,
             date: today,
             time: "10:00"
@@ -340,7 +340,7 @@
       const userId = localStorage.getItem("user_id");
       const patientId = localStorage.getItem("patient_id");
       const doctorId = selectedDoctor.doctor_id;
-
+      const date= new Date();
       if (!content.trim()) {
         alert("Please write something.");
         return;
@@ -351,9 +351,10 @@
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            user_id: userId,
-            patient_id: patientId,
+            user_id: parseInt(userId),
+            patient_id:parseInt(patientId)  ,
             doctor_id: doctorId,
+            date,
             content
           })
         });

@@ -135,9 +135,11 @@ app.post("/api/signup", async (req, res) => {
     lastName,
     specialty,
     phone,
-    gender,
+   
     dateOfBirth,
     address,
+     gender,
+     age
   } = req.body;
 
   if (!role || !username || !password) {
@@ -177,8 +179,8 @@ app.post("/api/signup", async (req, res) => {
 
     if (role === "patient") {
       await connection.execute(
-        `INSERT INTO patients (patient_id, user_id, first_name, last_name, date_of_birth, gender, phone, address)
-         VALUES (patients_seq.NEXTVAL, :user_id, :first_name, :last_name, TO_DATE(:dob, 'YYYY-MM-DD'), :gender, :phone, :address)`,
+        `INSERT INTO patients (patient_id, user_id, first_name, last_name, date_of_birth, gender, phone, address,age)
+         VALUES (patients_seq.NEXTVAL, :user_id, :first_name, :last_name, TO_DATE(:dob, 'YYYY-MM-DD'), :gender, :phone, :address,:age)`,
         {
           user_id: newUserId,
           first_name: firstName,
@@ -187,6 +189,7 @@ app.post("/api/signup", async (req, res) => {
           gender,
           phone,
           address,
+          age
         }
       );
     } else if (role === "doctor") {
@@ -588,9 +591,10 @@ app.listen(PORT, () =>
   console.log(`🚀 Server running at http://localhost:${PORT}`)
 );
 app.post("/api/feedback", async (req, res) => {
-  const { user_id, patient_id, doctor_id, content } = req.body;
+  debugger;
+  const { user_id, patient_id, doctor_id, date, content } = req.body;
 
-  if (!user_id || !patient_id || !doctor_id || !content) {
+  if (!user_id || !patient_id || !doctor_id || !content || !date) {
     return res.status(400).json({ error: "Missing required fields." });
   }
 
@@ -599,17 +603,23 @@ app.post("/api/feedback", async (req, res) => {
     conn = await getConnection();
     await conn.execute(
       `INSERT INTO comments (
-         comment_id, user_id, patient_id, doctor_id, content
-       ) VALUES (
-         comments_seq.NEXTVAL,
-         :user_id,
-         :patient_id,
-         :doctor_id,
-         :content
-       )`,
-      { user_id, patient_id, doctor_id, content },
+     COMMENT_ID, USER_ID,  DOCTOR_ID,PATIENT_ID,  CONTENT
+   ) VALUES (
+     comments_seq.NEXTVAL,
+     :user_id,
+     :doctor_id,
+     :patient_id,
+     :content
+   )`,
+      {
+        user_id,
+        doctor_id,
+        patient_id,
+        content
+      },
       { autoCommit: true }
     );
+
 
     res.json({ success: true, message: "Feedback submitted successfully." });
 
@@ -639,6 +649,33 @@ app.get("/api/doctor/:doctor_id/feedback", async (req, res) => {
       { doctor_id },
       { outFormat: oracledb.OUT_FORMAT_OBJECT }
     );
+
+    res.json(result.rows);
+
+  } catch (err) {
+    res.status(500).json({ error: "Failed to load feedback" });
+  } finally {
+    if (conn) await conn.close();
+  }
+});
+app.get("/api/feedback", async (req, res) => {
+  let conn;
+
+  try {
+    conn = await getConnection();
+    const result = await conn.execute(
+  `SELECT 
+     c.comment_id,
+     c.content,
+     TO_CHAR(c.COMMENT_DATE, 'YYYY-MM-DD HH24:MI') AS comment_date,
+     p.first_name || ' ' || p.last_name AS patient_name
+   FROM comments c
+   LEFT JOIN patients p ON p.PATIENT_ID = c.PATIENT_ID
+   ORDER BY c.COMMENT_DATE DESC`,
+  [],   // ← لا يوجد binds
+  { outFormat: oracledb.OUT_FORMAT_OBJECT }
+);
+
 
     res.json(result.rows);
 

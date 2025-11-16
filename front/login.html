@@ -146,11 +146,7 @@
     <h2>LOGIN</h2>
 
     <form id="loginForm">
-      <input type="text" id="username" placeholder="Email or Username" required />
-      <input type="password" id="password" placeholder="Password" required />
-
-      <h5 style="color:#0A233C; margin-bottom:10px;">Select Your Role</h5>
-      <select id="role" required>
+        <select id="role" required>
         <option value="">Select Role</option>
         <option value="patient">Patient</option>
         <option value="doctor">Doctor</option>
@@ -158,6 +154,11 @@
         <option value="admin">Admin</option>
       </select>
 
+      <input type="text" id="username" placeholder="Email or Username" required />
+      <input type="password" id="password" placeholder="Password" required />
+
+      <h5 style="color:#0A233C; margin-bottom:10px;">Select Your Role</h5>
+    
       <button type="submit">Login</button>
 
       <div class="signup-link">
@@ -215,11 +216,13 @@
                 break;
 
               case "patient":
+                console.log(res)
                 localStorage.setItem("user_id", data.user.user_id);
-                localStorage.setItem("patient_id", data.user.profile.patient_id);
+                localStorage.setItem("patient_id", data.user.profile.PATIENT_ID);
+
                 localStorage.setItem(
                   "patient_name",
-                  data.user.profile.first_name + " " + data.user.profile.last_name
+                  data.user.profile.FIRST_NAME + " " + data.user.profile.LAST_NAME
                 );
                 window.location.href = "patient-dashboard.html";
                 break;

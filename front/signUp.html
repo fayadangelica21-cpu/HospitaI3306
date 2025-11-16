@@ -4,6 +4,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+    crossorigin="anonymous"></script>
+
   <title>Sign Up | Quanta Cloud HIMS</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
@@ -147,38 +153,47 @@
 
     <form id="signupForm" class="container">
       <div class="row">
-        <div class="mt-3 col-lg-6">
+        <div class="col-lg-12">
+          <div id="roleSection" class="mt-4">
+            <h5 style="color:#0A233C; margin-bottom:10px;">Select Your Role</h5>
+            <select id="role" required>
+              <option value="">Select Role</option>
+              <option value="patient">Patient</option>
+              <option value="doctor">Doctor</option>
+              <!-- <option value="client">Other</option> -->
+            </select>
+          </div>
+
+        </div>
+        <div class="mt-3 col-md-6">
           <input type="text" id="firstName" placeholder="First Name" required />
         </div>
-        <div class="mt-3 col-lg-6">
+        <div class="mt-3 col-md-6">
           <input type="text" id="lastName" placeholder="Last Name" required />
         </div>
-        <div class="mt-3 col-lg-6">
+        <div class="mt-3 col-md-6">
           <input type="email" id="email" placeholder="Email" required />
         </div>
-        <div class="mt-3 col-lg-6">
+        <div class="mt-3 col-md-6">
           <input type="tel" id="phone" placeholder="phone" required />
         </div>
-        <div class="mt-3 col-lg-6">
+        <div class="mt-3 col-md-6">
           <input type="text" id="username" placeholder="Username" required />
         </div>
-        <div class="mt-3 col-lg-6">
+        <div class="mt-3 col-md-6">
           <input type="password" id="password" placeholder="Password" required />
         </div>
-        <div class="mt-3 col-lg-6">
-          <input type="text" id="specialty" placeholder="Specialty (for doctors only)" />
+        <div class="mt-3 col-md-6">
+          <input type="text" id="gender" placeholder="Gender " />
+        </div>
+        <div class="mt-3 col-md-6">
+          <input type="text" id="age" placeholder="Age " />
+        </div>
+        <div class="mt-3 col-md-6">
+          <input type="text" id="specialty" placeholder="Specialty " />
         </div>
       </div>
 
-      <div id="roleSection" class="mt-4">
-        <h5 style="color:#0A233C; margin-bottom:10px;">Select Your Role</h5>
-        <select id="role" required>
-          <option value="">Select Role</option>
-          <option value="patient">Patient</option>
-          <option value="doctor">Doctor</option>
-          <!-- <option value="client">Other</option> -->
-        </select>
-      </div>
 
       <button type="submit" class="mt-3">Sign Up</button>
 
@@ -192,9 +207,10 @@
     document.addEventListener("DOMContentLoaded", () => {
       const form = document.getElementById("signupForm");
       const specialtyField = document.getElementById("specialty");
-      const phoneField = document.getElementById("phone");
-
+      const patientField = document.getElementById("gender");
+      const agetField = document.getElementById("age");
       const roleSelect = document.getElementById("role");
+      const phoneField = document.getElementById("phone");
 
       // Hide specialty field unless doctor
       roleSelect.addEventListener("change", () => {
@@ -208,8 +224,22 @@
           specialtyField.style.display = "none";
           specialtyField.value = "";
         }
+        if (roleSelect.value === "patient") {
+          patientField.style.display = "block";
+          agetField.style.display = "block";
+          // phoneField.style.display = "block";
+
+        } else {
+          agetField.style.display = "none";
+          agetField.value = "";
+
+          patientField.style.display = "none";
+          patientField.value = "";
+        }
       });
       specialtyField.style.display = "none"; // default hidden
+      patientField.style.display = "none";
+      agetField.style.display = "none";
 
       form.addEventListener("submit", async (e) => {
         e.preventDefault();
@@ -222,6 +252,8 @@
         const role = roleSelect.value;
         const specialty = specialtyField.value.trim();
         const phone = phoneField.value.trim();
+        const age =parseInt(agetField.value.trim());
+        const gender = patientField.value.trim();
         if (!firstName || !lastName || !email || !username || !password || !role) {
           alert("⚠️ Please fill in all required fields!");
           return;
@@ -238,7 +270,9 @@
               email,
               username,
               password,
-              specialty, phone
+              specialty, phone,
+              gender,
+              age
             }),
           });
 
